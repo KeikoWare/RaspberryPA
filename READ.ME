@@ -1,0 +1,76 @@
+PA Server
+----------
+Raspberry Pi 2
+Ethernet connected
+Asterisk VoIP PBX 
+	http://www.voip-info.org/wiki/view/Asterisk
+	http://www.voip-info.org/wiki/view/Asterisk+MulticastRTP+channels
+$ sudo raspi-config
+	1) expand filesystem
+	2) update tool
+	3) reboot
+
+$ sudo apt-get update
+$ sudo apt-get upgrade -y
+
+$ sudo apt-get install Asterisk
+
+
+
+PA Speaker 
+----------- 
+Raspberry Pi B
+Wifi dongle
+Active speaker connected to the line out
+Linphone 
+	http://www.linphone.org/technical-corner/linphone/overview
+	http://www.jacobdevans.com/raspberry-pi-as-night-ringer-or-intercom/
+
+$ sudo raspi-config
+	1) expand filesystem
+	2) update tool
+	3) reboot
+
+$ sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+
+network={
+    ssid="The_ESSID"
+    psk="Your_wifi_password"
+}
+
+[CTRL] + [X]
+[Y]
+
+$ sudo reboot
+
+$ sudo apt-get install linphone-nogtk -y
+
+$ sudo nano /usr/local/sbin/PAconfig.sh
+
+#!/bin/bash
+linphonecsh init
+sleep 6
+linphonecsh register --host <ip address> --username <Ext>  --password <password>
+linphonecsh status register
+linphonecsh generic 'autoanswer enable'
+linphonecsh soundcard ring 0
+linphonecsh soundcard playback 0
+linphonecsh soundcard capture 2
+linphonecsh generic 'codec enable 8'
+
+[CTRL] + [X]
+[Y]
+
+$ chmod +x /usr/local/sbin/PAconfig.sh
+
+$ sudo nano /etc/rc.local
+
+/sbin/modprobe snd-aloop
+/usr/local/sbin/PAconfig.sh
+chmod 666 /dev/null
+amixer set PCM -- 100%
+
+[CTRL] + [X]
+[Y]
+
+$ sudo reboot
