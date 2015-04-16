@@ -13,7 +13,27 @@ $ sudo raspi-config
 $ sudo apt-get update
 $ sudo apt-get upgrade -y
 
-$ sudo apt-get install Asterisk
+$ sudo apt-get install Asterisk libpri1.4 asterisk-dahdi -y
+
+setup extensions.conf
+...
+
+setup sip.conf
+...
+
+setup manager.conf https://www.howtoforge.com/asterisk_pbx_linux
+add a user:
+[pi] 
+secret = raspberry
+read = system,call,log,verbose,command,agent,user,config
+write = system,call.log,verbose,command,agent,user,config 
+
+Set up the Asterisk HTTP server:
+1) Uncomment the line enabled=yes in /etc/asterisk/http.conf to enable Asterisk's built-in micro HTTP server.
+2) If you want Asterisk to actually deliver simple HTML pages, CSS, JavaScript, etc. you should uncomment enablestatic=yes
+3) Adjust your bindaddr and bindport settings as appropriate for your desired accessibility or leave them as default.
+4) Adjust your prefix if appropriate, which must be the beginning of any URI on the server to match. The default is asterisk and the rest of these instructions assume that value. 
+
 
 
 
@@ -61,7 +81,7 @@ linphonecsh generic 'codec enable 8'
 [CTRL] + [X]
 [Y]
 
-$ chmod +x /usr/local/sbin/PAconfig.sh
+$ sudo chmod +x /usr/local/sbin/PAconfig.sh
 
 $ sudo nano /etc/rc.local
 
